@@ -41,7 +41,7 @@ userSchema.pre('save', function( next ){
     if(user.isModified('password')) {
         // encode password using salt
         bcrypt.genSalt(saltRounds, function(err, salt) {
-            if (err) return next(err)
+            if(err) return next(err)
             
             bcrypt.hash(user.password, salt, function(err, hash) {
                 if(err) return next(err)
@@ -76,6 +76,22 @@ userSchema.methods.generateToken = function(cb) {
     user.save(function(err, user) {
         if(err) return cb(err);
         cb(null, user);
+    })
+}
+
+userSchema.statics.findByToken = function(token, cb) {
+    
+    var user = this;
+
+    // decode token
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+
+        // find user using decoded(user._id) and
+        // check if the client's token and db's token are identical
+        user.findOne({ "_id": decoded, "token": token }, function(err, user){
+            if(err) return cb(err);
+            cb(null, user)
+        })
     })
 }
 
