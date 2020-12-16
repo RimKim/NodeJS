@@ -27,6 +27,10 @@ app.get('/', (req, res) => {
   res.send('Hello World! How are you doing?')
 })
 
+app.get('/api/hello', (req, res) => {
+  res.send("hello react")
+})
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
